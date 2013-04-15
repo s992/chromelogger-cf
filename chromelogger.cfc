@@ -1,6 +1,6 @@
 component {
 
-	public chromecf function init() {
+	public chromelogger function init() {
 
 		variables.version = "0.1";
 		variables.headerName = "X-ChromeLogger-Data";
