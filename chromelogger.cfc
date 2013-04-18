@@ -112,7 +112,7 @@ component {
 			arguments.backtrace = "";
 		}
 
-		arrayAppend( variables.logObject.rows, [ 
+		arrayAppend( variables.logObject.rows, [
 			arguments.logs
 			, arguments.backtrace == "" ? javaCast( "null", 0 ) : arguments.backtrace
 			, arguments.severity 
@@ -150,6 +150,15 @@ component {
 	*/
 	private any function convert( required any object ) {
 
+		var md = getMetaData( arguments.object );
+
+		// was getting some weirdness where methods were being added to the log if they were part of
+		// hibernate entities, which in turn causes a stack overflow when we try to serialize. discarding 
+		// methods from the start fixes that.
+		if( isMethod( arguments.object ) ) {
+			return md.name;
+		}
+
 		// no need to continue if we aren't working with an object or if the passed object
 		// is an exception. exceptions return true in an isObject call, but they have a different
 		// underlying base class and don't work the same as other CFCs. better to just not screw
@@ -159,10 +168,12 @@ component {
 		}
 
 		var obj = {};
-		var md = getMetaData( arguments.object );
 		var props = {};
+		var prop = "";
 		var propval = "";
 		var comparison = {};
+		var isCollection = false;
+		var isStructCollection = false;
 
 		// save this object so that we don't get into an infinite loop if objects are referencing each other.
 		arrayAppend( variables.processed, arguments.object );
@@ -186,22 +197,38 @@ component {
 
 					propval = arguments.object.__chromecf_injected_getter( prop.name );
 					propval = isNull( propval ) ? "" : propval;
+					isCollection = ( isStruct( propval ) && !isObject( propval ) ) || isArray( propval );
 
-					// cf doesn't have any super reliable way to compare objects, so the best i could come up with
-					// is using the java equals() method. we'll just stick the objects into their own structs and then
-					// use struct.equals( otherstruct ). it's not perfect, but it works.
-					comparison = { 
-						obj1 = { obj = arguments.object }
-						, obj2 = { relatedObj = propval }
-					};
+					if( isCollection ) {
 
-					// if this object is referencing itself or we've already processed it, just put a reference to
-					// the object name.
-					if( comparison.obj1.equals( comparison.obj2 ) || arrayFind( variables.processed, propval ) ) {
-						propval = "recursion - parent object [ #getMetaData( propval ).name# ]";
+						obj[ prop.name ] = [];
+						isStructCollection = isStruct( propval ) && !isObject( propval );
+
+						for( var item in propval ) {
+
+							item = isStructCollection ? propval[ item ] : item;
+
+							if( isRecursion( arguments.object, item ) ) {
+
+								item = getRecursionString( item );
+
+							}
+
+							arrayAppend( obj[ prop.name ], convert( item, arguments.depth ) );
+
+						}
+
+					} else {
+
+						if( isRecursion( arguments.object, propval ) ) {
+
+							propval = getRecursionString( propval );
+
+						}
+
+						obj[ prop.name ] = convert( propval, arguments.depth );
+
 					}
-
-					obj[ prop.name ] = convert( propval );
 
 				}
 
@@ -217,6 +244,23 @@ component {
 		structDelete( arguments.object, "__chromecf_injected_getter" );
 
 		return obj;
+
+	}
+
+	private boolean function isRecursion( required any object1, required any object2 ) {
+
+		var comparison = {
+			obj1 = { obj = arguments.object1 }
+			, obj2 = { obj = arguments.object2}
+		};
+
+		return comparison.obj1.equals( comparison.obj2 ) || arrayFind( variables.processed, arguments.object2 );
+
+	}
+
+	private string function getRecursionString( required any object ) {
+
+		return "recursion - parent object [ #getMetaData( arguments.object ).name# ]";
 
 	}
 
@@ -264,6 +308,12 @@ component {
 
 		// all exceptions (i think?) ultimately extend java.lang.Throwable
 		return isInstanceOf( arguments.object, "java.lang.Throwable" );
+
+	}
+
+	private boolean function isMethod( required any object ) {
+
+		return structKeyExists( getMetaData( arguments.object ), "parameters" );
 
 	}
 
