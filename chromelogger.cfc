@@ -178,7 +178,9 @@ component {
 
 			props = structKeyExists( md, "properties" ) ? md.properties : [];
 
-			for( var prop in props ) {
+			for( var i = 1; i <= arrayLen( props ); i++ ) {
+
+				prop = props[ i ];
 
 				if( structKeyExists( arguments.object, "get" & prop.name ) ) {
 
