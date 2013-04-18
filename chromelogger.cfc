@@ -112,7 +112,7 @@ component {
 			arguments.backtrace = "";
 		}
 
-		arrayAppend( variables.logObject.rows, [
+		arrayAppend( getLogObject().rows, [
 			arguments.logs
 			, arguments.backtrace == "" ? javaCast( "null", 0 ) : arguments.backtrace
 			, arguments.severity 
@@ -126,7 +126,9 @@ component {
 
 	public void function writeHeader() {
 
-		getPageContext().getResponse().setHeader( variables.headerName, encode( getLogObject() ) );
+		if( arrayLen( getLogObject().rows ) ) {
+			getPageContext().getResponse().setHeader( variables.headerName, encode( getLogObject() ) );
+		}
 
 	}
 
@@ -214,7 +216,7 @@ component {
 
 							}
 
-							arrayAppend( obj[ prop.name ], convert( item, arguments.depth ) );
+							arrayAppend( obj[ prop.name ], convert( item ) );
 
 						}
 
@@ -226,7 +228,7 @@ component {
 
 						}
 
-						obj[ prop.name ] = convert( propval, arguments.depth );
+						obj[ prop.name ] = convert( propval );
 
 					}
 
