@@ -1,10 +1,11 @@
 component {
 
-	public chromelogger function init() {
+	public chromelogger function init( autoWriteHeader = true ) {
 
 		variables.version = "0.1";
 		variables.headerName = "X-ChromeLogger-Data";
 		variables.path = getMetaData( this ).path;
+		variables.autoWriteHeader = arguments.autoWriteHeader;
 		variables.backtraces = [];
 		variables.processed = [];
 		variables.logObject = {
@@ -117,19 +118,28 @@ component {
 			, arguments.severity 
 		]);
 
-		writeHeader();
+		if( variables.autoWriteHeader ) {
+			writeHeader();
+		}
 
 	}
 
-	private void function writeHeader() {
+	public void function writeHeader() {
 
-		getPageContext().getResponse().setHeader( variables.headerName, encode( variables.logObject ) );
+		getPageContext().getResponse().setHeader( variables.headerName, encode( getLogObject() ) );
 
 	}
 
 	private string function encode( required struct data ) {
 
 		return toBase64( serializeJSON( arguments.data ) );
+
+	}
+
+	// this is mostly here for unit testing purposes.
+	public struct function getLogObject() {
+
+		return variables.logObject;
 
 	}
 
