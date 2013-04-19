@@ -178,7 +178,7 @@ component {
 		var isStructCollection = false;
 
 		// save this object so that we don't get into an infinite loop if objects are referencing each other.
-		arrayAppend( variables.processed, arguments.object );
+		saveProcessedObject( arguments.object );
 
 		// ___class_name is a special keyword for chromelogger that allows it to print the object name all fancy-like
 		obj[ "___class_name" ] = md.name;
@@ -246,6 +246,12 @@ component {
 		structDelete( arguments.object, "__chromecf_injected_getter" );
 
 		return obj;
+
+	}
+
+	private void function saveProcessedObject( required any object ) {
+
+		arrayAppend( variables.processed, arguments.object );
 
 	}
 

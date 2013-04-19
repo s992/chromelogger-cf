@@ -165,6 +165,55 @@ component extends="mxunit.framework.TestCase" {
 
 	}
 
+	public void function testIsRecursionReturnsTrueForIdenticalObjects() {
+
+		makePublic( variables.cl, "isRecursion" );
+
+		var obj1 = new User();
+		var obj2 = obj1;
+
+		assertTrue( variables.cl.isRecursion( obj1, obj2 ) );
+
+	}
+
+	public void function testIsRecursionReturnsTrueForSavedObject() {
+
+		makePublic( variables.cl, "isRecursion" );
+		makePublic( variables.cl, "saveProcessedObject" );
+
+		var obj1 = new Address();
+		var obj2 = new User();
+
+		variables.cl.saveProcessedObject( obj2 );
+
+		assertTrue( variables.cl.isRecursion( obj1, obj2 ) );
+
+	}
+
+	public void function testIsRecursionReturnsFalseForNonIdenticalObjects() {
+
+		makePublic( variables.cl, "isRecursion" );
+
+		var obj1 = new User();
+		var obj2 = new Address();
+
+		assertFalse( variables.cl.isRecursion( obj1, obj2 ) );
+
+	}
+
+	public void function testGetRecursionString() {
+
+		makePublic( variables.cl, "getRecursionString" );
+
+		var actual = variables.cl.getRecursionString( this );
+
+		// the path can change based on mappings etc, but the basic format for notifying the
+		// user of recursion is as follows:
+		// recursion - parent object [ chromelogger.test.User ]
+		assertTrue( actual contains "recursion - parent object [" );
+
+	}
+
 	public void function testArgsToArray() {
 
 		makePublic( variables.cl, "argsToArray" );
@@ -271,6 +320,16 @@ component extends="mxunit.framework.TestCase" {
 
 	}
 
+	public void function testIsExceptionReturnsFalseForQueries() {
+
+		makePublic( variables.cl, "isException" );
+
+		var query = queryNew( "some,columns,and,stuff" );
+
+		assertFalse( variables.cl.isException( query ) );
+
+	}
+
 	public void function testIsExceptionReturnsFalseForObjects() {
 
 		makePublic( variables.cl, "isException" );
@@ -278,6 +337,90 @@ component extends="mxunit.framework.TestCase" {
 		var object = this;
 
 		assertFalse( variables.cl.isException( object ) );
+
+	}
+
+	public void function testIsMethodReturnsTrueForMethods() {
+
+		makePublic( variables.cl, "isMethod" );
+
+		var method = this.testIsMethodReturnsTrueForMethods;
+
+		assertTrue( variables.cl.isMethod( method ) );
+
+	}
+
+	public void function testIsMethodReturnsFalseForExceptions() {
+
+		makePublic( variables.cl, "isMethod" );
+
+		var exception = "";
+
+		try {
+
+			throw();
+
+		} catch( Any e ) {
+
+			exception = e;
+
+		}
+
+		assertFalse( variables.cl.isMethod( exception ) );
+
+	}
+
+	public void function testIsMethodReturnsFalseForSimpleValues() {
+
+		makePublic( variables.cl, "isMethod" );
+
+		var string = "i am a string";
+		var numeric = 12345;
+		var boolean = true;
+
+		assertFalse( variables.cl.isMethod( string ) );
+		assertFalse( variables.cl.isMethod( numeric ) );
+		assertFalse( variables.cl.isMethod( boolean ) );
+
+	}
+
+	public void function testIsMethodReturnsFalseForStructs() {
+
+		makePublic( variables.cl, "isMethod" );
+
+		var struct = { "key" = "value" };
+
+		assertFalse( variables.cl.isMethod( struct ) );
+
+	}
+
+	public void function testIsMethodReturnsFalseForArrays() {
+
+		makePublic( variables.cl, "isMethod" );
+
+		var array = [ 1, 2, 3, 4, 5 ];
+
+		assertFalse( variables.cl.isMethod( array ) );
+
+	}
+
+	public void function testIsMethodReturnsFalseForQueries() {
+
+		makePublic( variables.cl, "isMethod" );
+
+		var query = queryNew( "some,columns,and,stuff" );
+
+		assertFalse( variables.cl.isMethod( query ) );
+
+	}
+
+	public void function testIsMethodReturnsFalseForObjects() {
+
+		makePublic( variables.cl, "isMethod" );
+
+		var object = this;
+
+		assertFalse( variables.cl.isMethod( object ) );
 
 	}
 
