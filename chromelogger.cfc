@@ -315,7 +315,9 @@ component {
 
 	private boolean function isMethod( required any object ) {
 
-		return structKeyExists( getMetaData( arguments.object ), "parameters" );
+		// query metadata is different from every other data type because coldfusion is awesome, or something like that.
+		// a query certainly isn't a method, so we don't need to jump through hoops with the MD to figure that out.
+		return !isQuery( arguments.object ) && structKeyExists( getMetaData( arguments.object ), "parameters" );
 
 	}
 
