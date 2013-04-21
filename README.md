@@ -20,14 +20,18 @@ Installation
 5. Start logging!
 
 	```cfml
+	<cfscript>
 	console = new chromelogger.chromelogger();
 	console.log( "Logging some data!" );
 	console.error( "This is an error.." );
 	console.log({ "It logs more" = "than just strings." });
+	</cfscript>
 	```
 
 Usage
 ===============
+
+**Note**: Please disregard `<cfscript/>` tags in the following code examples; They're only there because GitHub doesn't like to syntax highlight cfscript without them.
 
 Options
 ---------------
@@ -35,7 +39,9 @@ Options
 `chromelogger-cf` can be instantiated with a few different options:
 
 ```cfml
+<cfscript>
 console = new chromelogger.chromelogger( autoWriteHeader = true, convertObjects = true );
+</cfscript>
 ```
 
 1. `autoWriteHeader` - If true, automatically sets the header at the end of each `.log()` call. ColdFusion 9 users should set this to false due to a bug in CF9 that prevents `setHeader` from overwriting a header with the same name. If true, the header will have to be set manually at the end of the request - see `/examples/manualHeader`.
@@ -47,6 +53,7 @@ Manually Setting Header
 For CF9, the `X-ChromeLogger-Data` header must be set manually. My preferred method of doing so is via `onRequestEnd`.
 
 ```cfml
+<cfscript>
 component {
 
 	function onRequestStart() {
@@ -64,6 +71,7 @@ component {
 	}
 
 }
+</cfscript>
 ```
 
 Using chromelogger as a Singleton
@@ -72,6 +80,7 @@ Using chromelogger as a Singleton
 `chromelogger` should generally be treated as a singleton in the context of the request, but as a transient in the context of the application. The logged items are stored in the `variables` scope of the component, so it's important that this data is flushed out at the end of each request or the logged data will eventually become too large for Chrome to handle in a single header. If `chromelogger` must be used as an application singleton, an extra step must be taken to reset the data after each request.
 
 ```cfml
+<cfscript>
 component {
 
 	function onApplicationStart() {
@@ -89,6 +98,7 @@ component {
 	}
 
 }
+</cfscript>
 ```
 
 API
