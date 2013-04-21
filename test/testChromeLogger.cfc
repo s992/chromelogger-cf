@@ -55,6 +55,20 @@ component extends="mxunit.framework.TestCase" {
 
 	}
 
+	public void function testResetShouldEmptyLogObjectRows() {
+
+		variables.cl.log( "test" );
+		variables.cl.log( 123 );
+		variables.cl.log( [] );
+
+		assertEquals( 3, arrayLen( variables.cl.getLogObject().rows ) );
+
+		variables.cl.reset();
+
+		assertEquals( 0, arrayLen( variables.cl.getLogObject().rows ) );
+
+	}
+
 	public void function testConvertShouldNotModifySimpleValues() {
 
 		makePublic( variables.cl, "convert" );

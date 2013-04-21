@@ -1,11 +1,12 @@
 component {
 
-	public chromelogger function init( autoWriteHeader = true ) {
+	public chromelogger function init( autoWriteHeader = true, convertObjects = true ) {
 
 		variables.version = "0.1";
 		variables.headerName = "X-ChromeLogger-Data";
 		variables.path = getMetaData( this ).path;
 		variables.autoWriteHeader = arguments.autoWriteHeader;
+		variables.convertObjects = arguments.convertObjects;
 		variables.backtraces = [];
 		variables.processed = [];
 		variables.logObject = {
@@ -145,12 +146,22 @@ component {
 
 	}
 
+	public void function reset() {
+
+		getLogObject().rows = [];
+
+	}
+
 	/**
 	* Recurses over an object and its properties to create a struct representation of the object. This is
 	* more useful than just calling serializeJSON on an object (especially when used with ORM entities, where
 	* serializeJSON is completely broken). There's plenty of hackery here, so beware.
 	*/
 	private any function convert( required any object ) {
+
+		if( !variables.convertObjects ) {
+			return arguments.object;
+		}
 
 		var md = getMetaData( arguments.object );
 
