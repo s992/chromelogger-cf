@@ -44,7 +44,7 @@ console = new chromelogger.chromelogger( autoWriteHeader = true, convertObjects 
 </cfscript>
 ```
 
-1. `autoWriteHeader` - If true, automatically sets the header at the end of each `.log()` call. ColdFusion 9 users should set this to false due to a bug in CF9 that prevents `setHeader` from overwriting a header with the same name. If true, the header will have to be set manually at the end of the request - see `/examples/manualHeader`.
+1. `autoWriteHeader` - If true, automatically sets the header at the end of each `.log()` call. ColdFusion 9 users should set this to false due to a bug in CF9 that prevents `setHeader` from overwriting a header with the same name. If true, the header will have to be set manually at the end of the request - see [the example below](https://github.com/s992/chromelogger-cf#manually-setting-header).
 2. `convertObjects` - Because `serializeJSON()` is mediocre at best for serializing objects, the `convert()` method is utilized to create a struct representation of a given object. Some users may prefer the default behavior of `serializeJSON()`, so `chromelogger` can be instantiated with `convertObjects = false` to prevent the conversion.
 
 Manually Setting Header
