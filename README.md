@@ -56,9 +56,9 @@ For CF9, the `X-ChromeLogger-Data` header must be set manually. My preferred met
 <cfscript>
 component {
 
-	function onRequestStart( autoWriteHeader = false ) {
+	function onRequestStart() {
 
-		request.chromelogger = new chromelogger.chromelogger();
+		request.chromelogger = new chromelogger.chromelogger( autoWriteHeader = false );
 
 	}
 
