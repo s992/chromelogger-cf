@@ -1,0 +1,31 @@
+{
+    "name": "ChromeLogger CF",
+    "slug":"chromelogger-cf",
+    "version": "1.0.0",
+    "author": "Sean Walsh",
+    "location": "https://github.com/s992/chromelogger-cf",
+    "createPackageDirectory": true,
+    "packageDirectory": "ChromeLoggerCF",
+    "homepage": "https://github.com/s992/chromelogger-cf",
+    "documentation": "https://github.com/s992/chromelogger-cf/wiki",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/s992/chromelogger-cf.git"
+    },
+    "bugs": "https://github.com/s992/chromelogger-cf/issues",
+    "shortDescription": "CFML Implementation of ChromeLogger",
+    "description": "ColdFusion component for logging variables to Google Chrome console using the Chrome Logger extension, found at http://chromelogger.com.",
+    "type": "logging",
+    "keywords": ["logging","debugging","development"],
+    "private": false,
+    "engines":[
+        {
+            "type": "railo",
+            "version": ">=4.1.x"
+        },
+        {
+            "type": "adobe",
+            "version": ">=9.0.0"
+        }
+    ]
+}
