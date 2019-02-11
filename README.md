@@ -3,6 +3,8 @@ Overview
 
 ColdFusion component for logging variables to Google Chrome console using the Chrome Logger extension, found at [http://chromelogger.com](http://chromelogger.com).
 
+An alternative to the ChromeLogger extension [is also available](http://github.com/kodus/server-log).
+
 This component is only intended to be used in a development environment.
 
 Requirements
