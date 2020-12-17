@@ -116,7 +116,7 @@ component {
 		arrayAppend( getLogObject().rows, [
 			arguments.logs
 			, arguments.backtrace == "" ? javaCast( "null", 0 ) : arguments.backtrace
-			, arguments.severity 
+			, arguments.severity
 		]);
 
 		if( variables.autoWriteHeader ) {
@@ -166,7 +166,7 @@ component {
 		var md = getMetaData( arguments.object );
 
 		// was getting some weirdness where methods were being added to the log if they were part of
-		// hibernate entities, which in turn causes a stack overflow when we try to serialize. discarding 
+		// hibernate entities, which in turn causes a stack overflow when we try to serialize. discarding
 		// methods from the start fixes that.
 		if( isMethod( arguments.object ) ) {
 			return md.name;
@@ -299,24 +299,34 @@ component {
 	}
 
 	private string function getBacktrace() {
-
-		var stacktrace = createObject( "java", "java.lang.Thread" ).currentThread().getStackTrace();
-		var tracelength = arrayLen( stacktrace );
-		var item = "";
 		var backtrace = "";
 
-		for( var i = 1; i <= tracelength; i++ ) {
+		// try to get the info via callStackGet()
+		try {
+			var callstack = callStackGet();
+			var i = 1;
+			while (i <= arrayLen(callstack) && callstack[i].template == variables.path) {
+				i++;
+			}
+			backtrace = callstack[i].template & " : " & callstack[i].lineNumber;
+		} catch (any) {
+			var stacktrace = createObject( "java", "java.lang.Thread" ).currentThread().getStackTrace();
+			var tracelength = arrayLen( stacktrace );
+			var item = "";
 
-			item = stacktrace[ i ];
+			for( var i = 1; i <= tracelength; i++ ) {
 
-			// grab the first item in the stack trace that is a cfc/cfm file and is not the chromelogger cfc
-			if( reFindNoCase( "\.cf[cm]$", item.getFileName() ) && item.getFileName() != variables.path ) {
+				item = stacktrace[ i ];
 
-				backtrace = item.getFileName() & " : " & item.getLineNumber();
-				break;
+				// grab the first item in the stack trace that is a cfc/cfm file and is not the chromelogger cfc
+				if( reFindNoCase( "\.cf[cm]$", item.getFileName() ) && item.getFileName() != variables.path ) {
+
+					backtrace = item.getFileName() & " : " & item.getLineNumber();
+					break;
+
+				}
 
 			}
-
 		}
 
 		return backtrace;
