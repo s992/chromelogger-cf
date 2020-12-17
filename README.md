@@ -10,7 +10,7 @@ This component is only intended to be used in a development environment.
 Requirements
 ===============
 
-CF 9 or 10. Untested in Railo/Open BD.
+Adobe ColdFusion or Lucee. (Tested in CF 9 and 10 and Lucee 5.3. Untested in Railo/Open BD.)
 
 Installation
 ===============
