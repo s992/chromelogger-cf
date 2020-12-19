@@ -43,6 +43,14 @@ component {
 
 	}
 
+	public void function table() {
+
+		var args = argsToArray( args = arguments );
+		arrayPrepend( args, "table" );
+		_log( args );
+
+	}
+
 	public void function group() {
 
 		var args = argsToArray( args = arguments );
